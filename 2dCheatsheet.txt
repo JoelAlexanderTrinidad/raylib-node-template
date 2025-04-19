@@ -1,0 +1,340 @@
+module: rcore →
+void InitWindow(int width, int height, const char *title);  // Inicializar ventana y contexto OpenGL
+void CloseWindow(void);                                     // Cerrar ventana y descargar contexto OpenGL
+bool WindowShouldClose(void);                               // Verificar si la aplicación debe cerrarse (ESC presionado o click en cerrar ventana)
+bool IsWindowReady(void);                                   // Verificar si la ventana se inicializó correctamente
+bool IsWindowFullscreen(void);                              // Verificar si la ventana está en pantalla completa
+bool IsWindowHidden(void);                                  // Verificar si la ventana está oculta
+bool IsWindowMinimized(void);                               // Verificar si la ventana está minimizada
+bool IsWindowMaximized(void);                               // Verificar si la ventana está maximizada
+bool IsWindowFocused(void);                                 // Verificar si la ventana tiene el foco
+bool IsWindowResized(void);                                 // Verificar si la ventana cambió de tamaño en el último frame
+bool IsWindowState(unsigned int flag);                      // Verificar si un flag específico de ventana está activo
+void SetWindowState(unsigned int flags);                    // Configurar estado de la ventana usando flags
+void ClearWindowState(unsigned int flags);                  // Limpiar flags de configuración de ventana
+void ToggleFullscreen(void);                                // Cambiar entre pantalla completa/ventana
+void ToggleBorderlessWindowed(void);                        // Cambiar a modo ventana sin bordes
+void MaximizeWindow(void);                                  // Maximizar ventana (si es redimensionable)
+void MinimizeWindow(void);                                  // Minimizar ventana (si es redimensionable)
+void RestoreWindow(void);                                   // Restaurar ventana (salir de minimizado/maximizado)
+void SetWindowIcon(Image image);                            // Establecer ícono para la ventana (imagen RGBA 32bit)
+void SetWindowTitle(const char *title);                     // Establecer título de la ventana
+void SetWindowPosition(int x, int y);                       // Establecer posición de la ventana en pantalla
+void SetWindowSize(int width, int height);                  // Establecer dimensiones de la ventana
+int GetScreenWidth(void);                                   // Obtener ancho de pantalla actual
+int GetScreenHeight(void);                                  // Obtener alto de pantalla actual
+Vector2 GetWindowPosition(void);                            // Obtener posición XY de la ventana en el monitor
+
+// Funciones relacionadas con el cursor
+void ShowCursor(void);                                      // Mostrar cursor
+void HideCursor(void);                                      // Ocultar cursor
+bool IsCursorHidden(void);                                  // Verificar si el cursor está oculto
+bool IsCursorOnScreen(void);                                // Verificar si el cursor está en la pantalla
+
+// Funciones de dibujo 2D
+void ClearBackground(Color color);                          // Establecer color de fondo
+void BeginDrawing(void);                                    // Preparar lienzo para empezar a dibujar
+void EndDrawing(void);                                      // Finalizar dibujo y cambiar buffers (doble buffer)
+void BeginMode2D(Camera2D camera);                          // Iniciar modo 2D con cámara personalizada
+void EndMode2D(void);                                       // Finalizar modo 2D
+void BeginScissorMode(int x, int y, int width, int height); // Iniciar modo recorte (definir área de dibujo)
+void EndScissorMode(void);                                  // Finalizar modo recorte
+
+// Funciones de temporización
+void SetTargetFPS(int fps);                                 // Establecer FPS objetivo (máximo)
+float GetFrameTime(void);                                   // Obtener tiempo del último frame (delta time)
+int GetFPS(void);                                           // Obtener FPS actuales
+
+// Funciones de entrada (teclado)
+bool IsKeyPressed(int key);                             // Verificar si una tecla fue presionada una vez
+bool IsKeyDown(int key);                                // Verificar si una tecla está siendo presionada
+bool IsKeyReleased(int key);                            // Verificar si una tecla fue liberada
+bool IsKeyUp(int key);                                  // Verificar si una tecla NO está siendo presionada
+int GetKeyPressed(void);                                // Obtener tecla presionada (retorna 0 si no hay teclas en cola)
+void SetExitKey(int key);                               // Establecer tecla para salir (por defecto ESC)
+
+// Funciones de entrada (mouse)
+bool IsMouseButtonPressed(int button);                  // Verificar si botón del mouse fue presionado
+bool IsMouseButtonDown(int button);                     // Verificar si botón del mouse está presionado
+bool IsMouseButtonReleased(int button);                 // Verificar si botón del mouse fue liberado
+bool IsMouseButtonUp(int button);                       // Verificar si botón del mouse NO está presionado
+##############################################################################################################
+module: rshapes →
+// Configurar textura y rectángulo para usar en dibujo de formas
+// NOTA: Útil cuando se usan formas básicas y una sola fuente,
+// definiendo un rectángulo blanco para caracteres de fuente permitiría dibujar todo en una sola llamada
+void SetShapesTexture(Texture2D texture, Rectangle source);  // Establecer textura y rectángulo para dibujo de formas
+Texture2D GetShapesTexture(void);                            // Obtener textura usada para dibujo de formas
+Rectangle GetShapesTextureRectangle(void);                   // Obtener rectángulo de origen de textura para formas
+
+// Funciones básicas de dibujo de formas 2D
+void DrawPixel(int posX, int posY, Color color);             // Dibujar un píxel [Puede ser lento, usar con cuidado]
+void DrawPixelV(Vector2 position, Color color);              // Dibujar un píxel (versión Vector) [Puede ser lento]
+void DrawLine(int startX, int startY, int endX, int endY, Color color);  // Dibujar una línea
+void DrawLineV(Vector2 start, Vector2 end, Color color);     // Dibujar una línea (usando líneas GL)
+void DrawLineEx(Vector2 start, Vector2 end, float grosor, Color color);  // Dibujar línea (usando triángulos/quads)
+void DrawLineStrip(const Vector2 *points, int count, Color color);  // Dibujar secuencia de líneas
+void DrawLineBezier(Vector2 start, Vector2 end, float grosor, Color color);  // Dibujar segmento con interpolación bezier
+
+// Funciones de dibujo de círculos
+void DrawCircle(int centerX, int centerY, float radio, Color color);  // Dibujar círculo relleno
+void DrawCircleSector(Vector2 center, float radio, float angInicio, float angFin, int segmentos, Color color);  // Dibujar sector circular
+void DrawCircleSectorLines(Vector2 center, float radio, float angInicio, float angFin, int segmentos, Color color);  // Contorno de sector circular
+void DrawCircleGradient(int centerX, int centerY, float radio, Color interior, Color exterior);  // Círculo con gradiente
+void DrawCircleV(Vector2 center, float radio, Color color);  // Dibujar círculo (versión Vector)
+void DrawCircleLines(int centerX, int centerY, float radio, Color color);  // Dibujar contorno de círculo
+
+// Funciones de dibujo de elipses
+void DrawEllipse(int centerX, int centerY, float radioH, float radioV, Color color);  // Dibujar elipse rellena
+void DrawEllipseLines(int centerX, int centerY, float radioH, float radioV, Color color);  // Contorno de elipse
+
+// Funciones de dibujo de rectángulos
+void DrawRectangle(int posX, int posY, int ancho, int alto, Color color);  // Dibujar rectángulo relleno
+void DrawRectangleV(Vector2 posicion, Vector2 tamaño, Color color);  // Dibujar rectángulo (versión Vector)
+void DrawRectangleRec(Rectangle rect, Color color);  // Dibujar rectángulo usando estructura Rectangle
+void DrawRectanglePro(Rectangle rect, Vector2 origen, float rotacion, Color color);  // Rectángulo con parámetros avanzados
+void DrawRectangleGradientV(int posX, int posY, int ancho, int alto, Color arriba, Color abajo);  // Rectángulo con gradiente vertical
+void DrawRectangleGradientH(int posX, int posY, int ancho, int alto, Color izquierda, Color derecha);  // Rectángulo con gradiente horizontal
+void DrawRectangleLines(int posX, int posY, int ancho, int alto, Color color);  // Dibujar contorno de rectángulo
+void DrawRectangleLinesEx(Rectangle rect, float grosor, Color color);  // Contorno de rectángulo con grosor personalizado
+
+// Funciones de dibujo de polígonos
+void DrawTriangle(Vector2 v1, Vector2 v2, Vector2 v3, Color color);  // Dibujar triángulo relleno
+void DrawTriangleLines(Vector2 v1, Vector2 v2, Vector2 v3, Color color);  // Dibujar contorno de triángulo
+void DrawPoly(Vector2 centro, int lados, float radio, float rotacion, Color color);  // Dibujar polígono regular
+void DrawPolyLines(Vector2 centro, int lados, float radio, float rotacion, Color color);  // Contorno de polígono
+
+// Funciones de detección de colisiones 2D
+bool CheckCollisionRecs(Rectangle rec1, Rectangle rec2);  // Comprobar colisión entre dos rectángulos
+bool CheckCollisionCircles(Vector2 centro1, float radio1, Vector2 centro2, float radio2);  // Colisión entre círculos
+bool CheckCollisionCircleRec(Vector2 centro, float radio, Rectangle rect);  // Colisión círculo-rectángulo
+bool CheckCollisionPointRec(Vector2 punto, Rectangle rect);  // Comprobar si punto está dentro de rectángulo
+bool CheckCollisionPointCircle(Vector2 punto, Vector2 centro, float radio);  // Comprobar si punto está dentro de círculo
+bool CheckCollisionPointTriangle(Vector2 punto, Vector2 p1, Vector2 p2, Vector2 p3);  // Comprobar si punto está dentro de triángulo
+Rectangle GetCollisionRec(Rectangle rec1, Rectangle rec2);  // Obtener rectángulo de colisión entre dos rectángulos
+Vector2 GetMousePosition(void);                         // Obtener posición XY del mouse
+float GetMouseWheelMove(void);                          // Obtener movimiento de rueda del mouse
+void SetMousePosition(int x, int y);     
+##############################################################################################################
+module: rtextures →
+// Funciones de carga/gestión de imágenes (en RAM, no requieren GPU)
+Image LoadImage(const char *fileName);                             // Cargar imagen desde archivo a memoria RAM
+Image LoadImageFromMemory(const char *fileType, const unsigned char *fileData, int dataSize); // Cargar imagen desde buffer en memoria
+bool IsImageValid(Image image);                                    // Verificar si una imagen es válida
+void UnloadImage(Image image);                                     // Descargar imagen de la memoria RAM
+bool ExportImage(Image image, const char *fileName);               // Exportar imagen a archivo
+bool ExportImageAsCode(Image image, const char *fileName);         // Exportar imagen como código (array de bytes)
+
+// Funciones de generación de imágenes
+Image GenImageColor(int width, int height, Color color);           // Generar imagen de color sólido
+Image GenImageGradientLinear(int width, int height, int direction, Color start, Color end); // Generar gradiente lineal
+Image GenImageGradientRadial(int width, int height, float density, Color inner, Color outer); // Generar gradiente radial
+Image GenImageChecked(int width, int height, int checksX, int checksY, Color col1, Color col2); // Generar imagen de cuadros
+Image GenImageWhiteNoise(int width, int height, float factor);    // Generar ruido blanco
+Image GenImageText(int width, int height, const char *text);      // Generar imagen de texto en escala de grises
+
+// Funciones de manipulación de imágenes
+Image ImageCopy(Image image);                                     // Crear copia de una imagen
+Image ImageFromImage(Image image, Rectangle rec);                 // Crear imagen desde parte de otra
+Image ImageText(const char *text, int fontSize, Color color);     // Crear imagen desde texto (fuente default)
+void ImageCrop(Image *image, Rectangle crop);                     // Recortar imagen
+void ImageResize(Image *image, int newWidth, int newHeight);      // Redimensionar imagen (algoritmo bicúbico)
+void ImageResizeNN(Image *image, int newWidth, int newHeight);    // Redimensionar imagen (vecino más cercano)
+void ImageFlipVertical(Image *image);                             // Voltear imagen verticalmente
+void ImageFlipHorizontal(Image *image);                           // Voltear imagen horizontalmente
+void ImageRotateCW(Image *image);                                 // Rotar imagen 90° en sentido horario
+void ImageRotateCCW(Image *image);                                // Rotar imagen 90° en sentido antihorario
+void ImageColorTint(Image *image, Color color);                   // Aplicar tinte de color
+void ImageColorInvert(Image *image);                              // Invertir colores
+void ImageColorGrayscale(Image *image);                           // Convertir a escala de grises
+void ImageColorBrightness(Image *image, int brightness);          // Ajustar brillo (-255 a 255)
+Color GetImageColor(Image image, int x, int y);                   // Obtener color de un píxel
+
+// Funciones de dibujo en imágenes (CPU)
+void ImageDrawPixel(Image *dst, int posX, int posY, Color color); // Dibujar píxel
+void ImageDrawLine(Image *dst, int startX, int startY, int endX, int endY, Color color); // Dibujar línea
+void ImageDrawCircle(Image *dst, int centerX, int centerY, int radius, Color color); // Dibujar círculo relleno
+void ImageDrawRectangle(Image *dst, int posX, int posY, int width, int height, Color color); // Dibujar rectángulo
+void ImageDrawRectangleLines(Image *dst, Rectangle rec, int thick, Color color); // Dibujar bordes de rectángulo
+void ImageDrawText(Image *dst, const char *text, int posX, int posY, int fontSize, Color color); // Dibujar texto
+void ImageDraw(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec, Color tint); // Dibujar imagen sobre otra
+
+// Funciones de texturas (GPU)
+Texture2D LoadTexture(const char *fileName);                      // Cargar textura desde archivo a VRAM
+Texture2D LoadTextureFromImage(Image image);                      // Cargar textura desde imagen
+RenderTexture2D LoadRenderTexture(int width, int height);         // Cargar textura de renderizado
+void UnloadTexture(Texture2D texture);                            // Descargar textura de VRAM
+void SetTextureFilter(Texture2D texture, int filter);             // Establecer filtro de textura (TEXTURE_FILTER_BILINEAR, etc.)
+void SetTextureWrap(Texture2D texture, int wrap);                 // Establecer modo de envoltura de textura
+
+// Funciones de dibujo de texturas
+void DrawTexture(Texture2D texture, int posX, int posY, Color tint); // Dibujar textura
+void DrawTextureV(Texture2D texture, Vector2 position, Color tint); // Dibujar textura (versión Vector2)
+void DrawTextureEx(Texture2D texture, Vector2 position, float rotation, float scale, Color tint); // Dibujar con parámetros extendidos
+void DrawTextureRec(Texture2D texture, Rectangle source, Vector2 position, Color tint); // Dibujar parte de una textura
+void DrawTexturePro(Texture2D texture, Rectangle source, Rectangle dest, Vector2 origin, float rotation, Color tint); // Dibujar con parámetros profesionales
+
+// Funciones de color
+Color Fade(Color color, float alpha);                            // Obtener color con alpha aplicado
+Color ColorBrightness(Color color, float factor);                // Ajustar brillo de color (-1.0 a 1.0)
+Color ColorContrast(Color color, float contrast);                // Ajustar contraste de color (-1.0 a 1.0)
+Color ColorAlpha(Color color, float alpha);                      // Cambiar alpha de color (0.0 a 1.0)
+Color ColorLerp(Color color1, Color color2, float factor);       // Interpolar entre dos colores
+Color GetColor(unsigned int hexValue);                           // Obtener color desde valor hexadecimal
+
+// Funciones de fuentes y texto
+Font GetFontDefault(void);                                      // Obtener la fuente por defecto
+Font LoadFont(const char *fileName);                            // Cargar fuente desde archivo
+void UnloadFont(Font font);                                     // Descargar fuente de VRAM
+
+// Funciones de dibujo de texto
+void DrawText(const char *text, int posX, int posY, int fontSize, Color color); // Dibujar texto (fuente default)
+void DrawTextEx(Font font, const char *text, Vector2 position, float fontSize, float spacing, Color tint); // Dibujar texto con fuente personalizada
+void DrawFPS(int posX, int posY);                               // Dibujar FPS actuales
+
+// Funciones de medición de texto
+int MeasureText(const char *text, int fontSize);                // Medir ancho de texto (fuente default)
+Vector2 MeasureTextEx(Font font, const char *text, float fontSize, float spacing); // Medir dimensiones de texto
+void SetTextLineSpacing(int spacing);                           // Establecer espaciado entre líneas
+
+// Funciones de manipulación de texto
+const char *TextFormat(const char *text, ...);                  // Formatear texto (estilo sprintf)
+bool TextIsEqual(const char *text1, const char *text2);         // Comparar dos textos
+int TextLength(const char *text);                               // Obtener longitud de texto
+const char *TextSubtext(const char *text, int position, int length); // Obtener subtexto
+const char **TextSplit(const char *text, char delimiter, int *count); // Dividir texto en partes
+const char *TextToUpper(const char *text);                      // Convertir a mayúsculas
+const char *TextToLower(const char *text);                      // Convertir a minúsculas
+int TextToInteger(const char *text);                            // Convertir texto a entero
+float TextToFloat(const char *text);                            // Convertir texto a float
+##############################################################################################################
+module: rtext →
+// Funciones de carga/descarga de fuentes
+Font GetFontDefault(void);                                     // Obtener la fuente por defecto
+Font LoadFont(const char *fileName);                           // Cargar fuente desde archivo a memoria de video (VRAM)
+Font LoadFontEx(const char *fileName, int fontSize,            // Cargar fuente con parámetros extendidos
+               int *codepoints, int codepointCount);          
+bool IsFontValid(Font font);                                   // Verificar si una fuente es válida
+void UnloadFont(Font font);                                    // Descargar fuente de VRAM
+
+// Funciones de dibujo de texto
+void DrawFPS(int posX, int posY);                              // Dibujar FPS actuales en pantalla
+void DrawText(const char *text, int posX, int posY,            // Dibujar texto (con fuente por defecto)
+             int fontSize, Color color);                       
+void DrawTextEx(Font font, const char *text, Vector2 position, // Dibujar texto con fuente personalizada
+               float fontSize, float spacing, Color tint);     
+void DrawTextPro(Font font, const char *text, Vector2 position, // Dibujar texto con parámetros avanzados
+                Vector2 origin, float rotation, float fontSize, 
+                float spacing, Color tint);                    
+
+// Funciones de medición de texto
+void SetTextLineSpacing(int spacing);                          // Establecer espaciado entre líneas de texto
+int MeasureText(const char *text, int fontSize);               // Medir ancho de texto (fuente por defecto)
+Vector2 MeasureTextEx(Font font, const char *text,            // Medir dimensiones de texto (ancho y alto)
+                     float fontSize, float spacing);           
+
+// Funciones de manipulación de texto básicas
+const char *TextFormat(const char *text, ...);                // Formatear texto (como printf)
+bool TextIsEqual(const char *text1, const char *text2);       // Comparar si dos textos son iguales
+unsigned int TextLength(const char *text);                    // Obtener longitud de un texto
+const char *TextSubtext(const char *text,                     // Obtener un fragmento de texto
+                       int position, int length);             
+const char **TextSplit(const char *text,                      // Dividir texto usando un delimitador
+                      char delimiter, int *count);            
+const char *TextToUpper(const char *text);                    // Convertir texto a mayúsculas
+const char *TextToLower(const char *text);                    // Convertir texto a minúsculas
+int TextToInteger(const char *text);                          // Convertir texto a número entero
+float TextToFloat(const char *text);                          // Convertir texto a número decimal
+
+// Funciones avanzadas de texto (opcionales)
+int GetGlyphIndex(Font font, int codepoint);                  // Obtener índice de un glifo en la fuente
+GlyphInfo GetGlyphInfo(Font font, int codepoint);             // Obtener información de un glifo
+Rectangle GetGlyphAtlasRec(Font font, int codepoint);         // Obtener rectángulo del glifo en el atlas
+##############################################################################################################
+module: rmodels →
+// =============================================
+// FUNCIONES BÁSICAS DE DIBUJO 2D
+// =============================================
+
+// Funciones de dibujo de formas básicas (2D)
+void DrawPixel(int posX, int posY, Color color);                         // Dibujar un píxel
+void DrawLine(int startX, int startY, int endX, int endY, Color color);  // Dibujar una línea
+void DrawCircle(int centerX, int centerY, float radius, Color color);    // Dibujar un círculo
+void DrawRectangle(int posX, int posY, int width, int height, Color color); // Dibujar un rectángulo
+void DrawTriangle(Vector2 v1, Vector2 v2, Vector2 v3, Color color);      // Dibujar un triángulo
+
+// Funciones de dibujo de texturas (2D)
+void DrawTexture(Texture2D texture, int posX, int posY, Color tint);     // Dibujar una textura
+void DrawTextureRec(Texture2D texture, Rectangle source,                // Dibujar parte de una textura
+                   Vector2 position, Color tint);                       
+
+// =============================================
+// FUNCIONES DE ENTRADA (TECLADO Y MOUSE)
+// =============================================
+
+// Funciones de teclado
+bool IsKeyPressed(int key);                  // Verificar si una tecla fue presionada
+bool IsKeyDown(int key);                     // Verificar si una tecla está siendo presionada
+bool IsKeyReleased(int key);                 // Verificar si una tecla fue liberada
+int GetKeyPressed(void);                     // Obtener la última tecla presionada
+
+// Funciones de mouse
+bool IsMouseButtonPressed(int button);       // Verificar si un botón del mouse fue presionado
+bool IsMouseButtonDown(int button);          // Verificar si un botón está siendo presionado
+bool IsMouseButtonReleased(int button);      // Verificar si un botón fue liberado
+Vector2 GetMousePosition(void);              // Obtener posición del mouse
+float GetMouseWheelMove(void);               // Obtener movimiento de la rueda del mouse
+void SetMousePosition(int x, int y);         // Establecer posición del mouse
+
+// =============================================
+// FUNCIONES DE COLISIÓN 2D
+// =============================================
+bool CheckCollisionRecs(Rectangle rec1, Rectangle rec2);          // Colisión entre rectángulos
+bool CheckCollisionCircles(Vector2 center1, float radius1,        // Colisión entre círculos
+                          Vector2 center2, float radius2);        
+bool CheckCollisionCircleRec(Vector2 center, float radius,        // Colisión círculo-rectángulo
+                            Rectangle rec);                       
+bool CheckCollisionPointRec(Vector2 point, Rectangle rec);        // Verificar si punto está en rectángulo
+bool CheckCollisionPointCircle(Vector2 point, Vector2 center,     // Verificar si punto está en círculo
+                              float radius);                      
+Rectangle GetCollisionRec(Rectangle rec1, Rectangle rec2);        // Obtener rectángulo de colisión
+
+// =============================================
+// FUNCIONES ADICIONALES ÚTILES PARA 2D
+// =============================================
+// (Nota: Estas son funciones genéricas que se mantienen de versiones anteriores)
+void ClearBackground(Color color);           // Limpiar pantalla con un color
+void BeginDrawing(void);                     // Comenzar el dibujado
+void EndDrawing(void);                       // Finalizar el dibujado
+void BeginMode2D(Camera2D camera);           // Comenzar modo 2D con cámara
+void EndMode2D(void);     
+##############################################################################################################
+colors
+// Custom raylib color palette for amazing visuals on WHITE background
+    #define LIGHTGRAY  (Color){ 200, 200, 200, 255 }   // Light Gray
+    #define GRAY       (Color){ 130, 130, 130, 255 }   // Gray
+    #define DARKGRAY   (Color){ 80, 80, 80, 255 }      // Dark Gray
+    #define YELLOW     (Color){ 253, 249, 0, 255 }     // Yellow
+    #define GOLD       (Color){ 255, 203, 0, 255 }     // Gold
+    #define ORANGE     (Color){ 255, 161, 0, 255 }     // Orange
+    #define PINK       (Color){ 255, 109, 194, 255 }   // Pink
+    #define RED        (Color){ 230, 41, 55, 255 }     // Red
+    #define MAROON     (Color){ 190, 33, 55, 255 }     // Maroon
+    #define GREEN      (Color){ 0, 228, 48, 255 }      // Green
+    #define LIME       (Color){ 0, 158, 47, 255 }      // Lime
+    #define DARKGREEN  (Color){ 0, 117, 44, 255 }      // Dark Green
+    #define SKYBLUE    (Color){ 102, 191, 255, 255 }   // Sky Blue
+    #define BLUE       (Color){ 0, 121, 241, 255 }     // Blue
+    #define DARKBLUE   (Color){ 0, 82, 172, 255 }      // Dark Blue
+    #define PURPLE     (Color){ 200, 122, 255, 255 }   // Purple
+    #define VIOLET     (Color){ 135, 60, 190, 255 }    // Violet
+    #define DARKPURPLE (Color){ 112, 31, 126, 255 }    // Dark Purple
+    #define BEIGE      (Color){ 211, 176, 131, 255 }   // Beige
+    #define BROWN      (Color){ 127, 106, 79, 255 }    // Brown
+    #define DARKBROWN  (Color){ 76, 63, 47, 255 }      // Dark Brown
+
+    #define WHITE      (Color){ 255, 255, 255, 255 }   // White
+    #define BLACK      (Color){ 0, 0, 0, 255 }         // Black
+    #define BLANK      (Color){ 0, 0, 0, 0 }           // Blank (Transparent)
+    #define MAGENTA    (Color){ 255, 0, 255, 255 }     // Magenta
+    #define RAYWHITE   (Color){ 245, 245, 245, 255 }   // My own White (raylib logo)
